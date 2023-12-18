@@ -1,0 +1,17 @@
+dnl Debian system install Dockerfile unit.
+dnl
+dnl Copyright (C) 2023 - present Goytin Services Ltd.
+dnl Written by Vladik Goytin.
+dnl
+dnl vi:syntax=m4
+
+# $1 -- Debian version to install. Example: debian:11-slim
+# $2 -- list of Debian packages to install
+define(`DEBIAN_INSTALL',	`					
+FROM $1 AS initial
+
+# ARCH must come from --build-arg ARCH=$(uname -m)
+ARG ARCH
+
+RUN apt-get --yes update &&						\
+	apt-get --yes install $2')
