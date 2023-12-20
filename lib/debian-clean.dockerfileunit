@@ -1,0 +1,73 @@
+dnl Debian system cleanup Dockerfile unit.
+dnl
+dnl Copyright (C) 2023 - present Goytin Services Ltd.
+dnl Written by Vladik Goytin.
+dnl
+dnl vi:syntax=m4
+
+dnl $1 -- additional Debian packages to remove. Optional.
+dnl $2 -- additional files/directories to remove. Optional.
+define(`DEBIAN_CLEAN_UNIT',	
+	`								\
+	# >>> Debian cleanup <<<					\
+	# Clears out the local repository of retrieved package files.	\
+	apt-get --yes clean &&						\
+									\
+									\
+	# Things to remove ...						\
+									\
+	#  ... Debian packages:						\
+	#   manpages         -- look man pages on the Internet		\
+	#   e2fsprogs        -- there is no EXT2/3/4 filesystem there,	\
+	#                       it is a Docker image			\
+	#   ncurses-base     -- ???					\
+	#   ncurses-bin      -- ???					\
+	#   util-linux       -- it is a Docker image, not a real system,\
+	#                       no need in this utilities		\
+	#   util-linux-extra -- see util-linux				\
+	rm_pkgs_1="manpages e2fsprogs ncurses-base ncurses-bin" &&	\
+	rm_pkgs_2="util-linux util-linux-extra" &&			\
+	apt-get --yes --allow-remove-essential autoremove		\
+		${rm_pkgs_1}						\
+		${rm_pkgs_2}						\
+		$1 &&							\
+									\
+	# ... /usr/share directories					\
+	rm_usr_share_1="man locale info doc X11 fonts zoneinfo" &&	\
+	rm_usr_share_2="common-licenses" &&				\
+	cd /usr/share &&						\
+		rm -rf ${rm_usr_share_1}				\
+			${rm_usr_share_2} &&				\
+									\
+	# ... /usr/share/perl/5.?? directories				\
+	rm_usr_share_perl="IO Locale Math Test Test2 Unicode" &&	\
+	cd /usr/share/perl/5.?? &&					\
+		rm -rf ${rm_usr_share_perl} &&				\
+									\
+	# ... /usr/share/vim/vim?? directories				\
+	rm_usr_share_vim="doc lang tutor" &&				\
+	cd /usr/share/vim/vim?? &&					\
+		rm -rf ${rm_usr_share_vim} &&				\
+									\
+	# ... /usr/lib/${ARCH}-linux-gnu libraries			\
+	rm_usr_lib_1="gconv libX* *xcb* *freetype* *font*" &&		\
+	rm_usr_lib_2="*png* *jpeg* *jbig* *tiff* *webp*" &&		\
+	cd /usr/lib/${ARCH}-linux-gnu &&				\
+		rm -rf ${rm_usr_lib_1}					\
+			${rm_usr_lib_2} &&				\
+									\
+	# ... /bin or /usr/bin files					\
+	# As /bin is a symlink to /usr/bin, I refer to them as rm_bin_X \
+	rm_bin_1="*dwp* *gprof* *locale* tac ptx nl tac tic rpcgen" &&	\
+	rm_bin_2="csplit factor dir vdir stty mknod chgrp chown" &&	\
+	cd /bin &&							\
+		rm -rf ${rm_bin_1}					\
+			${rm_bin_2} &&					\
+									\
+	# ... /var directories and files				\
+	rm_var="log cache/debconf/*-old lib/dpkg/*-old" &&		\
+	cd /var &&							\
+		rm -rf ${rm_var} &&					\
+									\
+	# Finally remove additional files/directories, if any.		\
+	rm -rf $2')
