@@ -5,6 +5,8 @@ dnl Written by Vladik Goytin.
 dnl
 dnl vi:syntax=m4
 
+include(debian-gcc-lto-clean.dockerfileunit)
+
 dnl $1 -- additional Debian packages to remove. Optional.
 dnl $2 -- additional files/directories to remove. Optional.
 define(`DEBIAN_CLEAN_UNIT',	

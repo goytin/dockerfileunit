@@ -1,0 +1,22 @@
+dnl GCC LTO clean on a Debian system Dockerfile unit.
+dnl
+dnl Copyright (C) 2023 - present Goytin Services Ltd.
+dnl Written by Vladik Goytin.
+dnl
+dnl vi:syntax=m4
+
+dnl Use this macro as the 2nd argument to DEBIAN_CLEAN_UNIT:
+dnl   DEBIAN_CLEAN_UNIT(<...>, <files/dirs> DEBIAN_GCC_LTO_FILES)
+define(`DEBIAN_GCC_LTO_FILES',
+	`								\
+	dnl The first 2 lines find the real GCC Debian package.		\
+	$(real_gcc=$(readlink --canonicalize /usr/bin/gcc) &&		\
+		gcc_deb=$(dpkg --search ${real_gcc} | sed "s/:.*//") &&	\
+									\
+		dnl Get all LTO-related files but liblto_plugin.so:	\
+		dnl sometimes the plugin is required for		\
+		dnl "compiler evaluation" (CMake, autotools).		\
+		dpkg --listfiles gcc ${gcc_deb} |			\
+			grep lto |					\
+			grep -v plugin |				\
+			xargs)')
