@@ -1,0 +1,72 @@
+dnl CMake Dockerfile unit.
+dnl
+dnl Copyright (C) 2024 - present Goytin Services Ltd.
+dnl Written by Vladik Goytin.
+dnl
+dnl vi:syntax=m4
+
+include(cmake-size-opt.dockerfileunit)
+
+dnl $1 -- arbitrary string #1
+dnl $1 -- arbitrary string #2
+define(`CONCAT',		`$1$2')
+
+define(`CMAKE_REPO',		`https://github.com/Kitware/CMake/releases')
+
+dnl $1 -- CMake version. Example: 3.28.2
+define(`CMAKE_VVER',		`CONCAT(v, $1)')
+
+dnl $1 -- CMake version. Example: 3.28.2
+define(`CMAKE_FILE',		`cmake-$1.tar.gz')
+
+dnl $1 -- CMake version. Example: 3.28.2
+define(`CMAKE_URL',		`CMAKE_REPO/download/CMAKE_VVER($1)/CMAKE_FILE($1)')
+
+dnl $1 -- CMake version. Example: 3.28.2
+define(`CMAKE_DOWNLOAD_CMD',	`					\
+	cd /tmp &&							\
+		wget -c CMAKE_URL($1) &&				\
+		tar -C /usr/src -xf /tmp/CMAKE_FILE($1)')
+
+dnl $1 -- CMake version. Example: 3.28.2
+define(`CMAKE_CONFIGURE_CMD',	`					\
+	cd /usr/src/cmake-$1 &&						\
+		./bootstrap --parallel=$(nproc)')
+
+define(`CMAKE_BUILD_CMD',	`make --jobs=$(nproc)')
+define(`CMAKE_INSTALL_CMD',	`make --jobs=$(nproc) install')
+define(`CMAKE_CLEAN_INSTALLED',	`					\
+	cd /usr/local &&						\
+		rm -rf doc						\
+			bin/cpack bin/ctest				\
+			share/aclocal share/bash-completion		\
+			share/emacs share/vim				\
+			share/cmake-*/Help')
+
+dnl $1 -- CMake version. Example: 3.28.2
+define(`CMAKE_CLEAN_SOURCES',	`					\
+	rm -rf /usr/src/cmake-$1 /tmp/CMAKE_FILE($1)')
+
+dnl $1 -- CMake version. Example: 3.28.2
+define(`CMAKE_CLEAN_CMD',		`				\
+	CMAKE_CLEAN_INSTALLED &&					\
+		CMAKE_CLEAN_SOURCES($1)')
+
+dnl $1 -- CMake version. Example: 3.28.2
+define(`CMAKE_UNIT',	
+	`								\
+	# >>> CMake Dockerfile unit <<<					\
+	# CMake download						\
+	CMAKE_DOWNLOAD_CMD($1) &&					\
+									\
+	# CMake configure						\
+	CMAKE_CONFIGURE_CMD($1) &&					\
+									\
+	# CMake build							\
+	CMAKE_BUILD_CMD &&						\
+									\
+	# CMake install							\
+	CMAKE_INSTALL_CMD &&						\
+									\
+	# CMake clean							\
+	CMAKE_CLEAN_CMD($1)')
