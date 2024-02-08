@@ -31,7 +31,10 @@ define(`CMAKE_DOWNLOAD_CMD',	`					\
 dnl $1 -- CMake version. Example: 3.28.2
 define(`CMAKE_CONFIGURE_CMD',	`					\
 	cd /usr/src/cmake-$1 &&						\
-		./bootstrap --parallel=$(nproc)')
+		./bootstrap --parallel=$(nproc)				\
+			CFLAGS=CMAKE_SIZE_OPT_CFLAGS			\
+			CXXFLAGS=CMAKE_SIZE_OPT_CFLAGS &&		\
+		CMAKE_FIX_OPT_LEVEL')
 
 define(`CMAKE_BUILD_CMD',	`make --jobs=$(nproc)')
 define(`CMAKE_INSTALL_CMD',	`make --jobs=$(nproc) install')
