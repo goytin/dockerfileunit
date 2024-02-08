@@ -1,0 +1,29 @@
+dnl CMake size optimization Dockerfile unit.
+dnl
+dnl Copyright (C) 2024 - present Goytin Services Ltd.
+dnl Written by Vladik Goytin.
+dnl
+dnl vi:syntax=m4
+
+dnl Generic optimization for size without debug information.
+define(`CMAKE_SIZE_OPT_CFLAGS',	`"-s -Os -fomit-frame-pointer"')
+
+dnl CMake incorrectly sets compiler flags, i.e.
+dnl
+dnl   -s -Os -fomit-frame-pointer -O3 -DNDEBUG
+dnl   ^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^^^
+dnl                |                   |
+dnl                |                   +------- CMake flags
+dnl                +--------------------------- user-defined flags
+dnl
+dnl It should be exactly the opposite:
+dnl
+dnl   -O3 -DNDEBUG -s -Os -fomit-frame-pointer
+dnl
+dnl for the user-defined flags to take effect
+dnl as compiler accepts the last optimization option.
+dnl
+dnl As a workaround just remove the standard optimization.
+dnl Vladik, 2024.03.19
+define(`CMAKE_FIX_OPT_LEVEL',	`					\
+	find . -name flags.make -exec sed "s/-O3//" -i {} \;')
