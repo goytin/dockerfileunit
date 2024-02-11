@@ -1,0 +1,51 @@
+dnl lvgl Dockerfile unit.
+dnl
+dnl Copyright (C) 2024 - present Goytin Services Ltd.
+dnl Written by Vladik Goytin.
+dnl
+dnl vi:syntax=m4
+
+define(`LVGL_REPO',		`https://github.com/lvgl/lvgl')
+
+dnl $1 -- lvgl version. Example: v9.0.0
+define(`LVGL_DOWNLOAD_CMD',	`					\
+	cd /usr/src &&							\
+		git clone						\
+			-b $1						\
+			LVGL_REPO')
+
+define(`LVGL_CONFIGURE_CMD',	`					\
+	cd lvgl &&							\
+		dnl First of all I need to create a lv_conf.h file	\
+		cp -a lv_conf_template.h lv_conf.h &&			\
+									\
+		mkdir -p cmake/build &&					\
+		cd cmake/build &&					\
+		cmake							\
+			CFLAGS=CMAKE_SIZE_OPT_CFLAGS			\
+			CXXFLAGS=CMAKE_SIZE_OPT_CFLAGS &&		\
+		CMAKE_FIX_OPT_LEVEL')
+
+define(`LVGL_BUILD_CMD',	`make --jobs=$(nproc)')
+define(`LVGL_INSTALL_CMD',	`make --jobs=$(nproc) install')
+
+define(`LVGL_CLEAN_CMD',	`rm -rf /usr/src/lvgl')
+
+dnl $1 -- lvgl version. Example: v9.0.0
+define(`LVGL_UNIT',	
+	`								\
+	# >>> lvgl <<<							\
+	# lvgl download							\
+	LVGL_DOWNLOAD_CMD($1) &&					\
+									\
+	# lvgl configure						\
+	LVGL_CONFIGURE_CMD &&						\
+									\
+	# lvgl build							\
+	LVGL_BUILD_CMD &&						\
+									\
+	# lvgl install							\
+	LVGL_INSTALL_CMD &&						\
+									\
+	# lvgl clean							\
+	LVGL_CLEAN_CMD')
