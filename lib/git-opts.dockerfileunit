@@ -1,0 +1,8 @@
+dnl git options Dockerfile unit.
+dnl
+dnl Written by Vladik Goytin.
+dnl
+dnl vi:syntax=m4
+
+dnl Clone only the necessary minimum.
+define(`GIT_SHALLOW_CLONE',	`--depth 1 --shallow-submodules')
