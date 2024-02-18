@@ -7,6 +7,10 @@ dnl vi:syntax=m4
 
 include(debian-gcc-lto-clean.dockerfileunit)
 
+dnl $1 -- pattern to find
+define(`DEB_PKG',		`					\
+	$(dpkg --list | awk "/$1/ { print \$`'2 }")')
+
 dnl $1 -- additional Debian packages to remove. Optional.
 dnl $2 -- additional files/directories to remove. Optional.
 define(`DEBIAN_CLEAN_UNIT',	
@@ -28,10 +32,13 @@ define(`DEBIAN_CLEAN_UNIT',
 	#                       no need in this utilities		\
 	#   util-linux-extra -- see util-linux				\
 	rm_pkgs_1="manpages e2fsprogs ncurses-base ncurses-bin" &&	\
-	rm_pkgs_2="util-linux util-linux-extra" &&			\
+	rm_pkgs_2="util-linux" &&			\
 	apt-get --yes --allow-remove-essential autoremove		\
 		${rm_pkgs_1}						\
 		${rm_pkgs_2}						\
+		DEB_PKG(e2fsprogs)					\
+
+		DEB_PKG(util-linux*)					\
 		$1 &&							\
 									\
 	# ... /usr/share directories					\
