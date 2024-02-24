@@ -1,0 +1,23 @@
+dnl /usr/local cleanup Dockerfile unit.
+dnl
+dnl Copyright (C) 2023 - present Goytin Services Ltd.
+dnl Written by Vladik Goytin.
+dnl
+dnl vi:syntax=m4
+
+dnl $1 -- additional files/directories to remove. Optional.
+define(`USRLOCAL_CLEAN_UNIT',	
+	`								\
+	# >>> /usr/local cleanup <<<					\
+	# /usr/local directories					\
+	rm_usr_local="man locale info doc games" &&			\
+	cd /usr/local &&						\
+		rm -rf ${rm_usr_local} &&				\
+									\
+	# /usr/local/share directories					\
+	rm_usr_local_share="doc fonts licenses man" &&			\
+	cd /usr/local/share &&						\
+		rm -rf ${rm_usr_local_share} &&				\
+									\
+	# Finally remove additional files/directories, if any.		\
+	rm -rf $1')

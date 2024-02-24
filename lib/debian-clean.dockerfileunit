@@ -6,6 +6,7 @@ dnl
 dnl vi:syntax=m4
 
 include(debian-gcc-lto-clean.dockerfileunit)
+include(usr-local-clean.dockerfileunit)
 
 dnl $1 -- pattern to find
 define(`DEB_PKG',		`					\
@@ -78,5 +79,8 @@ define(`DEBIAN_CLEAN_UNIT',
 	cd /var &&							\
 		rm -rf ${rm_var} &&					\
 									\
-	# Finally remove additional files/directories, if any.		\
-	rm -rf $2')
+	# Remove additional files/directories, if any ...		\
+	rm -rf $2 &&							\
+									\
+	# ... and clean /usr/local.					\
+	USRLOCAL_CLEAN_UNIT()')
