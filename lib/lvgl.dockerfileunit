@@ -5,9 +5,10 @@ dnl Written by Vladik Goytin.
 dnl
 dnl vi:syntax=m4
 
+include(github.dockerfileunit)
 include(git-opts.dockerfileunit)
 
-define(`LVGL_REPO',		`https://github.com/lvgl/lvgl')
+define(`LVGL_REPO',		`GITHUB/lvgl/lvgl')
 
 dnl $1 -- lvgl version. Example: v9.0.0
 define(`LVGL_DOWNLOAD_CMD',	`					\

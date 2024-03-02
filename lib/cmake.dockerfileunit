@@ -5,13 +5,14 @@ dnl Written by Vladik Goytin.
 dnl
 dnl vi:syntax=m4
 
+include(github.dockerfileunit)
 include(cmake-size-opt.dockerfileunit)
 
 dnl $1 -- arbitrary string #1
 dnl $1 -- arbitrary string #2
 define(`CONCAT',		`$1$2')
 
-define(`CMAKE_REPO',		`https://github.com/Kitware/CMake/releases')
+define(`CMAKE_REPO',		`GITHUB/Kitware/CMake/releases')
 
 dnl $1 -- CMake version. Example: 3.28.2
 define(`CMAKE_VVER',		`CONCAT(v, $1)')
