@@ -1,0 +1,33 @@
+dnl GitHub useful definitions.
+dnl
+dnl Written by Vladik Goytin.
+dnl
+dnl vi:syntax=m4
+
+define(`GITHUB',		`https://github.com')
+
+define(`GITHUB_API',		`https://api.github.com/repos')
+
+dnl $1 -- user name
+dnl $2 -- repository name
+define(`GITHUB_LATEST_RELEASE',	`GITHUB_API/$1/$2/releases/latest')
+
+dnl $1 -- user name
+dnl $2 -- repository name
+define(`GITHUB_ARCHIVE',	`GITHUB/$1/$2/archive/refs/tags')
+
+dnl $1 -- user name
+dnl $2 -- repository name
+dnl $3 -- file to save the release.
+dnl
+dnl I need to supply statement "print $4" to awk.
+dnl Construct "$`'4" prevents M4 from interpreting
+dnl "$4" as its argument, so it is translated to "$4"
+dnl in the Dockerfile.
+dnl Construct "\$`'4" screens "$4" from shell,
+dnl so it becomes "<...> { print \$4 }"
+dnl and this is correct.
+define(`GITHUB_DOWNLOAD_LATEST_RELEASE',	`			\
+	wget $(wget -q -O - GITHUB_LATEST_RELEASE($1, $2) |		\
+		awk -F\" "/browser_download_url.*${ARCH}/		\
+			{ print \$`'4 }") -O $3')
