@@ -1,0 +1,40 @@
+dnl zellij Dockerfile unit.
+dnl
+dnl Written by Vladik Goytin.
+dnl
+dnl vi:syntax=m4
+
+dnl zellij is a modern terminal multiplexer like GNU Screen or tmux.
+dnl
+dnl See https://zellij.dev/ for more details.
+
+include(github.dockerfileunit)
+
+define(`ZELLIJ_LINUX_SYS',	`unknown-linux-musl')
+define(`ZELLIJ_RELEASES',	`https://github.com/zellij-org/zellij/releases')
+define(`ZELLIJ_FILE',		`zellij-${ARCH}-ZELLIJ_LINUX_SYS.tar.gz')
+
+dnl $1 -- zellij version. Example: latest
+define(`ZELLIJ_URL',		`ZELLIJ_RELEASES/$1/download/ZELLIJ_FILE')
+
+dnl $1 -- zellij version. Example: latest
+define(`ZELLIJ_DOWNLOAD_CMD',	`					\
+	cd /tmp &&							\
+		wget -c ZELLIJ_URL($1)')
+
+define(`ZELLIJ_INSTALL_CMD',	`					\
+	tar -C /usr/local/bin -xf /tmp/ZELLIJ_FILE')
+define(`ZELLIJ_CLEAN_CMD',	`rm -f /tmp/ZELLIJ_FILE')
+
+dnl $1 -- zellij version. Example: latest
+define(`ZELLIJ_UNIT',	
+	`								\
+	# >>> ZELLIJ <<<						\
+	# zellij download						\
+	ZELLIJ_DOWNLOAD_CMD($1) &&					\
+									\
+	# zellij install						\
+	ZELLIJ_INSTALL_CMD &&						\
+									\
+	# zellij clean							\
+	ZELLIJ_CLEAN_CMD')
