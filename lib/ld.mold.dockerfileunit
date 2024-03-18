@@ -1,0 +1,32 @@
+dnl ld.mold Dockerfile unit.
+dnl
+dnl Written by Vladik Goytin.
+dnl
+dnl vi:syntax=m4
+
+include(github.dockerfileunit)
+
+dnl mold is a faster drop-in replacement for existing Unix linkers.
+dnl
+dnl See https://github.com/rui314/mold for more details.
+
+define(`LDMOLD_FILE',		`/tmp/mold.tar.gz')
+
+define(`LDMOLD_DOWNLOAD_CMD',	`					\
+	GITHUB_DOWNLOAD_LATEST_RELEASE(rui314, mold, LDMOLD_FILE)')
+
+define(`LDMOLD_INSTALL_CMD',	`					\
+	tar --strip-components=1 -C /usr/local -xf LDMOLD_FILE')
+define(`LDMOLD_CLEAN_CMD',	`rm -f LDMOLD_FILE')
+
+define(`LDMOLD_UNIT',	
+	`								\
+	# >>> ld.mold <<<						\
+	# ld.mold download						\
+	LDMOLD_DOWNLOAD_CMD &&						\
+									\
+	# ld.mold install						\
+	LDMOLD_INSTALL_CMD &&						\
+									\
+	# ld.mold clean							\
+	LDMOLD_CLEAN_CMD')
