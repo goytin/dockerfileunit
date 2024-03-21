@@ -1,0 +1,10 @@
+dnl Final build stage copy Dockerfile unit.
+dnl
+dnl Copyright (C) 2023 - present Goytin Services Ltd.
+dnl Written by Vladik Goytin.
+dnl
+dnl vi:syntax=m4
+
+define(`FINAL_BUILD_STAGE_COPY',	`					
+FROM scratch
+COPY --from=initial / /')
