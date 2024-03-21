@@ -1,0 +1,63 @@
+# Dockerfile.main example.
+#
+# Written by Vladik Goytin.
+#
+# vi:syntax=m4
+
+# This file should be processed by Dockerfile Units.
+
+include(debian-install.dockerfileunit)
+include(cmake.dockerfileunit)
+include(ld.so-cache.dockerfileunit)
+include(ld.mold.dockerfileunit)
+include(zellij.dockerfileunit)
+
+define(`DEV_PKGS1',		`build-essential autoconf libtool pkg-config')
+define(`DEV_PKGS2',		`git vim ccache rsync')
+define(`ADMIN_PKGS',		`sudo ca-certificates')
+define(`NET_PKGS',		`wget net-tools inetutils-ping')
+
+dnl This example create a Docker image based on debian:11-slim.
+dnl It starts by installing several development, networking and administrative
+dnl packages and proceeds to units.
+dnl 
+dnl Note the 3rd argument of DEBIAN_INSTALL() macro, "ccache".
+dnl If it is not empty, it denotes the ccache cache directory
+dnl which is copied into /usr/src/.ccache directory of the newly created
+dnl Docker image. This cache may greatly speed compilation of various
+dnl software components. As an example of how to make use ccache,
+dnl see lib/cmake.dockerfileunit.
+dnl
+dnl In this specific example we install CMake 3.25.3,
+dnl LVGL v9.1.0, proceed to mold linker and to Zellij terminal multiplexer.
+dnl
+dnl At the end we clean Debian (optional but strongly recommended as
+dnl numerous files and packages are irrelevant for Docker images) and
+dnl mandatory dynamic linker cache update.
+dnl
+dnl The final step must be FINAL_BUILD_STAGE_COPY().
+
+DEBIAN_INSTALL(debian:11-slim,
+			DEV_PKGS1			\
+			DEV_PKGS2			\
+			ADMIN_PKGS			\
+			NET_PKGS,			\
+		ccache,					\
+		) &&					\
+										\
+	CMAKE_UNIT(3.25.3) &&							\
+	LVGL_UNIT(v9.1.0) &&							\
+	 									\
+	LDMOLD_UNIT() &&							\
+	ZELLIJ_UNIT(latest) &&							\
+										\
+	dnl wget was only needed to download binary packages so safe
+	dnl to remove it. If wget is needed, leave the 1st argument empty.
+	dnl
+	dnl In this example I remove LTO support. If you believe
+	dnl it is required, leave the 2nd argument empty.
+	DEBIAN_CLEAN_UNIT(wget, DEBIAN_GCC_LTO_FILES) &&			\
+										\
+	UPDATE_LDSO_CACHE()
+
+FINAL_BUILD_STAGE_COPY()
