@@ -1,0 +1,17 @@
+dnl ld.so cache Dockerfile unit.
+dnl
+dnl Written by Vladik Goytin.
+dnl
+dnl vi:syntax=m4
+
+dnl $1 -- space-separated list of paths to add to the compiler cache.
+dnl       Multiple spaces are supported.
+dnl       The list may be empty.
+dnl       Example 1: /usr/local/lib
+dnl       Example 2: /opt/app2/lib /opt/app3/lib
+define(`UPDATE_LDSO_CACHE',	
+	`								\
+	# >>> linker cache <<<						\
+	echo $1 |							\
+		sed "s/[ ]\+/\n/g" > /etc/ld.so.conf.d/extra.conf &&	\
+		ldconfig')
