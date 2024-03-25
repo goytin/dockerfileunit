@@ -1,0 +1,27 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Dockerfile Unit
+Upstream-Contact: Vladik Goytin <goytin@gmail.com>
+Source: git@github.com:goytin/dockerfileunit.git
+
+# Sample paragraph, commented out:
+#
+Files: *.md
+Copyright: 2023 - present Vladik Goytin <goytin@gmail.com>
+License: Apache-2.0
+
+Files: Makefile
+Copyright: 2023 - present Vladik Goytin <goytin@gmail.com>
+License: Apache-2.0
+
+Files: tools/*
+Copyright: 2023 - present Vladik Goytin <goytin@gmail.com>
+License: Apache-2.0
+
+Files: examples/*
+Copyright: 2023 - present Vladik Goytin <goytin@gmail.com>
+License: Apache-2.0
+
+Files: lib/*
+Copyright: 2023 - present Vladik Goytin <goytin@gmail.com>
+License: Apache-2.0
+

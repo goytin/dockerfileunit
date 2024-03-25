@@ -1,3 +1,7 @@
+dnl SPDX-FileCopyrightText: (C) 2023 - present Vladik Goytin <goytin@gmail.com>
+dnl
+dnl SPDX-License-Identifier: Apache-2.0
+dnl
 dnl GCC LTO clean on a Debian system Dockerfile unit.
 dnl
 dnl Copyright (C) 2023 - present Goytin Services Ltd.
